@@ -6,7 +6,7 @@
  * @last modified by  : Siddharth Patni
 **/
 @isTest(SeeAllData=true)
-public with sharing class FeedCommentTriggerHelperTest {
+public with sharing class FeedCommentTriggerHandlerTest {
     
     @isTest static void testInsertFeedComment() {
         

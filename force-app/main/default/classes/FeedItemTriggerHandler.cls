@@ -1,10 +1,10 @@
 /**
  * @description       : FeedItemTrigger's helper class. sends email to all followers except mentioned users
  * @author            : Siddharth Patni
- * @last modified on  : 09-29-2021
+ * @last modified on  : 09-30-2021
  * @last modified by  : Siddharth Patni
 **/
-public with sharing class FeedItemTriggerHelper {
+public with sharing class FeedItemTriggerHandler {
 
     public static void sendEmail(List<FeedItem> feedItemList){
 

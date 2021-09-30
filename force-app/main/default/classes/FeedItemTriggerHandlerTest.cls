@@ -1,11 +1,11 @@
 /**
  * @description       : Test Class
  * @author            : Siddharth Patni
- * @last modified on  : 09-29-2021
+ * @last modified on  : 09-30-2021
  * @last modified by  : Siddharth Patni
 **/
 @isTest(SeeAllData=true)
-public class FeedItemTriggerHelperTest {
+public class FeedItemTriggerHandlerTest {
     
     @isTest static void testInsertFeedItem() {
         // creating test data
