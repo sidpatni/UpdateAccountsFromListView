@@ -1,31 +1,31 @@
 /**
  * @description       : FeedCommentTrigger's helper class sends email to all followers of object except mentioned users
  * @author            : Siddharth Patni
- * @last modified on  : 09-29-2021
+ * @last modified on  : 09-30-2021
  * @last modified by  : Siddharth Patni
 **/
 public with sharing class FeedCommentTriggerHelper {
 
-    public static void sendEmail(List<FeedComment> commentList){
+    public static void sendEmail( List<FeedComment> commentList ){
         //Getting list of all followers
-        List<EntitySubscription> subscribersList=[SELECT SubscriberId,Id FROM EntitySubscription WHERE ParentId =: commentList[0].ParentId LIMIT 999];
-        List<Id> subscribersIds=new List<Id>();
+        List<EntitySubscription> subscribersList = [ SELECT SubscriberId,Id FROM EntitySubscription WHERE ParentId =: commentList[0].ParentId LIMIT 999 ];
+        List<Id> subscribersIds = new List<Id>();
 
-        if(subscribersList.size()>0){
+        if (subscribersList.size() > 0){
              /* Get List of Mentioned Users */
-             List<ID> idsOfMentionedUsers = new List<ID>();
+             List<Id> mentionedUserIds = new List<Id>();
             
              ConnectApi.Comment comment = ConnectApi.ChatterFeeds.getComment(null, commentList[0].Id);
              List<ConnectApi.MessageSegment> messageSegments = comment.body.messageSegments;
              for (ConnectApi.MessageSegment messageSegment : messageSegments) {
                  if (messageSegment instanceof ConnectApi.MentionSegment) {
                      ConnectApi.MentionSegment mentionSegment = (ConnectApi.MentionSegment) messageSegment;
-                     idsOfMentionedUsers.add(mentionSegment.record.id);
+                     mentionedUserIds.add(mentionSegment.record.id);
                  }
              }
             // listing id and then fetching email of all followers except mentioned users
             for(EntitySubscription subscriber:subscribersList){
-                if(!idsOfMentionedUsers.contains(subscriber.subscriberId)){
+                if(!mentionedUserIds.contains(subscriber.subscriberId)){
                     subscribersIds.add(subscriber.subscriberId);
                 }
             }

@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Siddharth Patni
  * @group             : 
- * @last modified on  : 09-29-2021
+ * @last modified on  : 09-30-2021
  * @last modified by  : Siddharth Patni
 **/
 @isTest(SeeAllData=true)
@@ -41,7 +41,7 @@ public with sharing class FeedCommentTriggerHelperTest {
         commentInput.body = messageBodyInput;
 
         Test.startTest();
-        ConnectApi.Comment commentRep = ConnectApi.ChatterFeeds.postCommentToFeedElement(communityId, feedElementId, commentInput, null);    
+            ConnectApi.Comment commentRep = ConnectApi.ChatterFeeds.postCommentToFeedElement(communityId, feedElementId, commentInput, null);    
         Test.stopTest();      
     }
 }
