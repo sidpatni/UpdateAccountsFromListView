@@ -2,18 +2,21 @@
  * @description       : 
  * @author            : Siddharth Patni
  * @group             : 
- * @last modified on  : 09-30-2021
+ * @last modified on  : 10-04-2021
  * @last modified by  : Siddharth Patni
 **/
 @isTest(SeeAllData=true)
 public with sharing class FeedCommentTriggerHandlerTest {
     
-    @isTest static void testInsertFeedComment() {
+    @isTest static void feedCommentWithMention() {
         
         // creating test data
-        List<User> users = CreateFeedTriggerTestData.createUsers();
-        Account accountObj = CreateFeedTriggerTestData.createAccount();
-        CreateFeedTriggerTestData.followAccounts(accountObj,users);
+        List<User> users = CreateFeedTriggerTestData.createUsers(2);
+        Account accountObj = CreateFeedTriggerTestData.createAccounts(1)[0];
+        CreateFeedTriggerTestData.followAccount(accountObj,users[0]);
+        CreateFeedTriggerTestData.followAccount(accountObj,users[1]);
+
+
         FeedItem feed = new FeedItem (
             parentid = accountObj.id,
             type = 'ContentPost',
@@ -44,4 +47,28 @@ public with sharing class FeedCommentTriggerHandlerTest {
             ConnectApi.Comment commentRep = ConnectApi.ChatterFeeds.postCommentToFeedElement(communityId, feedElementId, commentInput, null);    
         Test.stopTest();      
     }
+    @isTest static void feedCommentWithoutMention() {
+        
+        User usr = CreateFeedTriggerTestData.createUsers(1)[0];
+        Account accountObj = CreateFeedTriggerTestData.createAccounts(1)[0];
+        CreateFeedTriggerTestData.followAccount(accountObj,usr);
+        FeedItem fi1 = new FeedItem (
+                ParentId = accountObj.Id,
+                body = 'post 1 on account 1'
+            );
+        FeedItem fi2 = new FeedItem (
+            ParentId = accountObj.Id,
+            body = 'post 2 on account 1'
+        );
+        insert new List<FeedItem>{fi1,fi2};
+        List<FeedComment> comments = new List<FeedComment>();
+        for (Integer i = 0; i < 5; i++) {
+            FeedComment comment = new FeedComment();
+            comment.FeedItemId = i < 3 ?  fi1.Id :  fi2.Id ;
+            comment.CommentBody = 'test comment ' + i ;
+            comments.add(comment);
+        }
+        insert comments;
+    }
+
 }
