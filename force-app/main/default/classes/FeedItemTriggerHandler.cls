@@ -1,15 +1,14 @@
 /**
  * @description       : FeedItemTrigger's helper class. sends email to all followers except mentioned users
  * @author            : Siddharth Patni
- * @last modified on  : 10-04-2021
+ * @last modified on  : 10-05-2021
  * @last modified by  : Siddharth Patni
 **/
 public with sharing class FeedItemTriggerHandler {
     public static final String COMMUNITY_ID = null ;
-    @TestVisible public static Integer accountCount ;
-    @TestVisible public static Integer feedCount ;
+    public static final String DISPLAY_NAME = 'Salesforce Support' ;
 
-    public static void handleEmail(Map<Id,FeedItem> feedItemMap){
+    public static void handleAfterInsert(Map<Id,FeedItem> feedItemMap){
         List<Id> accountsId = new List<Id>();
         for ( FeedItem feed : feedItemMap.values() ) {
             //listing Records of account type and post of test or content type
@@ -23,7 +22,7 @@ public with sharing class FeedItemTriggerHandler {
                                                     WHERE ParentId IN :accountsId 
                                                     LIMIT 999 ];
         /* mapping account to followers */
-        Map<Id,List<Id>> accountFollowersMap = mapAccountToFollowers(subscribersList);
+        Map<Id,List<Id>> accountFollowersMap = Utility.mapRecordToFollowers(subscribersList);
         
         Map<Id,User> users = new Map<Id,User>([SELECT Id,Name,Email FROM User]); 
         Map<Id,Account> accounts = new Map<Id,Account>([SELECT Id,Name FROM Account WHERE Id IN :new List<Id>(accountFollowersMap.keySet())]); 
@@ -35,12 +34,9 @@ public with sharing class FeedItemTriggerHandler {
             for (ConnectApi.BatchResult batchResult : batchResults) {
                 if (batchResult.isSuccess() && batchResult.getResult() instanceof ConnectApi.FeedItem) {
                     ConnectApi.FeedItem feedItem = (ConnectApi.FeedItem) batchResult.getResult();
-                    feedMentionMap.put(feedItem.Id,getMentionedUsers(feedItem));
+                    feedMentionMap.put(feedItem.Id,Utility.getMentionedUsers(feedItem));
                 }
             }
-
-            accountCount = accountFollowersMap.size();
-            feedCount = feedMentionMap.size();
 
             for (FeedItem feed : feedItemMap.values()) {
                 if(accountFollowersMap.get(feed.ParentId) != null){
@@ -49,56 +45,32 @@ public with sharing class FeedItemTriggerHandler {
                     if(feedMentionMap.get(feed.id) != null){
                         followersSet.removeAll( feedMentionMap.get(feed.id) );
                     }
-                    List<String> toAddresses = getEmailAddresses(followersSet,users);
+                    List<String> toAddresses = Utility.getEmailAddresses(followersSet,users);
                     
                     if (toAddresses.size() > 0){
-                        String displayName = 'Salesforce Support';	
                         String subject = users.get(feed.InsertedById).Name+' made new post on account '+accounts.get(feed.ParentId).Name;
                         String body = buildHtmlBody(accounts.get(feed.ParentId),users.get(feed.InsertedById),feed);
-                        Utility.sendHTMLMail(displayName, toAddresses, subject, body); 
+                        Utility.sendHTMLMail(DISPLAY_NAME, toAddresses, subject, body); 
                     }
                 }
             }
         }
     }
-    public static Map<Id,List<Id>> mapAccountToFollowers(List<EntitySubscription> subscribersList){
-        Map<Id,List<Id>> accountFollowersMap = new Map<Id,List<Id>>();
-        for (EntitySubscription esObj : subscribersList){
-            List<Id> followersList;
-            if ( accountFollowersMap.get(esObj.ParentId) == null ){
-                followersList = new List<Id>();
-            } else {
-                followersList = accountFollowersMap.get(esObj.ParentId);
-            }
-            followersList.add(esObj.SubscriberId);
-            
-            accountFollowersMap.put(esObj.ParentId,followersList);
-        }
-        return accountFollowersMap;
-    }
-    public static List<Id> getMentionedUsers(ConnectApi.FeedItem feedItem){
-        List<Id> mentionedUsersId = new List<Id>();
-        List<ConnectApi.MessageSegment> messageSegments = feedItem.body.messageSegments;
-        for (ConnectApi.MessageSegment messageSegment : messageSegments) {
-            if (messageSegment instanceof ConnectApi.MentionSegment) {
-                ConnectApi.MentionSegment mentionSegment = (ConnectApi.MentionSegment) messageSegment;
-                mentionedUsersId.add(mentionSegment.record.id);
-            }
-        }  
-        return mentionedUsersId;
-    }
-    public static List<String> getEmailAddresses(Set<Id> userIds,Map<Id,User> users){
-        List<String> emailAddresses = new List<String>();
-        for(Id userId : userIds){
-            emailAddresses.add(users.get(userId).Email);
-        }
-        return emailAddresses;
-    }
+   
+    /**
+    * @description builds html body having link to account, user and FeedItem
+    * @author Siddharth Patni | 10-05-2021 
+    * @param accountObj 
+    * @param userObj 
+    * @param feedObj 
+    * @return String 
+    **/
     public static String buildHtmlBody(Account accountObj,User userObj,FeedItem feedObj){
+        String instanceName = System.Url.getSalesforceBaseUrl().toExternalForm();
         String body = 'Hi,<br><br>'
-                    +'There is a new post on account <a href="https://concretio-9b-dev-ed.lightning.force.com/lightning/r/Account/'+accountObj.Id+'/view">'+accountObj.Name 
-                    +'</a> By <a href="https://concretio-9b-dev-ed.lightning.force.com/lightning/r/User/'+userObj.Id+'/view">'+userObj.Name 
-                    + '</a><br><br>To view/reply please click on the link <a href="https://concretio-9b-dev-ed.lightning.force.com/'+feedObj.Id+'">Reply/View</a>';
+                    + 'There is a new post on account <a href="' + instanceName + '/lightning/r/Account/' + accountObj.Id + '/view">'+accountObj.Name 
+                    + '</a> By <a href="' + instanceName + '/lightning/r/User/' + userObj.Id + '/view">' + userObj.Name 
+                    + '</a><br><br>To view/reply please click on the link <a href="' + instanceName + '/'+feedObj.Id+'">Reply/View</a>';
         return body;
     }
 }

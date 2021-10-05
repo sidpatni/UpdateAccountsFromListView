@@ -1,15 +1,12 @@
 /**
- * @description       : 
  * @author            : Siddharth Patni
- * @group             : 
- * @last modified on  : 10-04-2021
+ * @last modified on  : 10-05-2021
  * @last modified by  : Siddharth Patni
 **/
 @isTest(SeeAllData=true)
 public with sharing class FeedCommentTriggerHandlerTest {
     
     @isTest static void feedCommentWithMention() {
-        
         // creating test data
         List<User> users = CreateFeedTriggerTestData.createUsers(2);
         Account accountObj = CreateFeedTriggerTestData.createAccounts(1)[0];
@@ -70,5 +67,4 @@ public with sharing class FeedCommentTriggerHandlerTest {
         }
         insert comments;
     }
-
 }

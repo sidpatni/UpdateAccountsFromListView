@@ -1,5 +1,5 @@
 /**
- * @description       : Removes some basic tags from string
+ * @description       : Removes some basic HTML tags from String
  * @author            : Siddharth Patni
  * @last modified on  : 09-30-2021
  * @last modified by  : Siddharth Patni

@@ -1,7 +1,6 @@
 /**
- * @description       : Test Class
  * @author            : Siddharth Patni
- * @last modified on  : 10-04-2021
+ * @last modified on  : 10-05-2021
  * @last modified by  : Siddharth Patni
 **/
 @isTest(SeeAllData=true)
@@ -41,8 +40,6 @@ public class FeedItemTriggerHandlerTest {
         ConnectApi.BatchResult[] feedElement = ConnectApi.ChatterFeeds.postFeedElementBatch(null, batchInputs);
         Test.stopTest();  
 
-        System.assertEquals(FeedItemTriggerHandler.accountCount , 4, 'test failed ');
-        System.assertEquals(FeedItemTriggerHandler.feedCount , 5, 'test failed');
     }
     
     @isTest static void bulkFeedItemWithoutMentioned(){
@@ -67,7 +64,5 @@ public class FeedItemTriggerHandlerTest {
             );
             insert  new List<FeedItem>{fi1,fi2,fi3};
         Test.stopTest();    
-        System.assertEquals(FeedItemTriggerHandler.accountCount , 2, 'test failed check parentID');
-        System.assertEquals(FeedItemTriggerHandler.feedCount , 3, 'test failed check feeds');
     }
 }
