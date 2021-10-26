@@ -1,0 +1,41 @@
+<!--
+  @description       : 
+  @author            : Siddharth Patni
+  @group             : 
+  @last modified on  : 10-26-2021
+  @last modified by  : Siddharth Patni
+-->
+<template>
+    <lightning-card title={title}>
+
+      <template if:true={showTable}>
+        <div style="height:200px">
+          <!--Data table of similar Records-->
+          <lightning-datatable key-field="Id"
+                  data={similarRecords}
+                  columns={columns}
+                  enable-infinite-loading = {hasMoreData}
+                  onloadmore={loadMoreData}
+                  hide-checkbox-column="true"
+                  show-row-number-column="true"
+                  default-sort-direction = {defaultSortDirection}
+                  sorted-direction = {sortDirection}
+                  sorted-by = {sortedBy}
+                  onsort = {onHandleSort}>
+          </lightning-datatable> 
+        </div>
+      </template>
+
+      <template if:false={showTable}>
+        <div class="slds-box slds-align_absolute-center slds-p-around_xx-small">
+          <p style="font-size:18px;">
+            <b>Looks like there are no similar records to show</b>
+          </p>
+        </div>
+      </template>
+
+    </lightning-card>
+    
+  </template>
+
+</template>

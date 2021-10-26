@@ -1,0 +1,22 @@
+<!--
+  @description       : 
+  @author            : Siddharth Patni
+  @group             : 
+  @last modified on  : 10-26-2021
+  @last modified by  : Siddharth Patni
+-->
+<template >
+    <lightning-card title = "Setups" class = "slds-p-top_medium">
+        <div style="height:200px">
+            <lightning-datatable key-field="Id"
+                    data = {data}
+                    columns = {columns}
+                    default-sort-direction = {defaultSortDirection}
+                    sorted-direction = {sortDirection}
+                    sorted-by = {sortedBy}
+                    onsort = {onHandleSort}
+                    onrowaction={handleRowAction}>
+            </lightning-datatable> 
+        </div>
+    </lightning-card>    
+</template>

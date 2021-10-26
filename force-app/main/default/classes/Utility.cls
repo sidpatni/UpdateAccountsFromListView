@@ -120,4 +120,34 @@ public with sharing class Utility {
         }
         return recordFollowersMap;
     }
+    
+    /*@AuraEnabled
+    public static Boolean deleteSimilarRecordsSetups(List<String> recordIds){
+        try {
+            List<SimilarRecordsSetup__c> deletableRecords = [SELECT Id FROM SimilarRecordsSetup__c WHERE Id IN :recordIds];
+            System.debug(deletableRecords);
+            delete deletableRecords;
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }*/
+    
+    /**
+    * @author Siddharth Patni | 10-26-2021 
+    * @param objectApiName 
+    * @param recordId 
+    * @param commaSeparatedFields 
+    * @return String : returns record in JSON string 
+    **/
+    @AuraEnabled
+    public static String getRecord(String objectApiName,String recordId, String commaSeparatedFields){
+        try {
+            String query = 'SELECT '+ commaSeparatedFields + ' FROM ' + objectApiName + ' WHERE Id = \'' + recordId + '\' LIMIT 1';
+            List<sObject> result = Database.query(query);
+            return JSON.serialize(result[0]);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
 }
