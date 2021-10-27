@@ -1,0 +1,63 @@
+<!--
+  @description       : 
+  @author            : Siddharth Patni
+  @group             : 
+  @last modified on  : 10-26-2021
+  @last modified by  : Siddharth Patni
+-->
+<template>
+    <!-- new button and title -->
+    <lightning-card title = "Similar Records Setup">
+        <lightning-button label="new" onclick={handleNew} slot = "actions"></lightning-button>
+    </lightning-card>
+
+    <!-- All custom setup's table-->
+    <c-similar-records-setups-table 
+                onedit={handleEdit}
+                onreload={handleTableReload}> 
+    </c-similar-records-setups-table>
+
+    <!-- pop-up modal on click of new button -->
+    <template if:true={showModal}>  
+        <div class="slds-modal slds-fade-in-open slds-backdrop">  
+            <div class="slds-modal__container">  
+                <!------HEADER Section-->  
+                <div class="slds-modal__header">  
+                    <lightning-button-icon icon-name="utility:close" alternative-text="Close this window" size="large"  
+                        variant="bare-inverse" onclick={closeModal} class="slds-modal__close">  
+                    </lightning-button-icon>  
+                    <h1><b> New Similar Records Setup </b> </h1>
+                </div>  
+
+                <!------Body Section-->  
+                <lightning-card >
+                    <div class="slds-p-around_x-small">
+                        <lightning-combobox
+                            name="ObjectName"
+                            label="Select Object Name"
+                            placeholder="Select Object Name"
+                            options={objectsOptions}
+                            onchange={handleObjectSelect}
+                            value={obj}> </lightning-combobox>
+                        <br/>
+                        <template if:true={obj}>
+                            <lightning-dual-listbox name="Fields"
+                                label="Select Fields"
+                                source-label="Available"
+                                selected-label="Selected"
+                                field-level-help="Select your preferred Fields to Match Similarity"
+                                options={fieldList}
+                                value={fieldsSelected}
+                                onchange={handleFieldSelected}></lightning-dual-listbox>
+                        </template>
+                        <br/>
+                    
+                        <template if:true={hasFieldsSelected}>
+                            <lightning-button label="Save" onclick={createSetup} variant="brand" class="slds-align_absolute-center"></lightning-button>
+                        </template>
+                    </div>
+                </lightning-card>
+            </div>  
+        </div>  
+    </template>
+</template>
