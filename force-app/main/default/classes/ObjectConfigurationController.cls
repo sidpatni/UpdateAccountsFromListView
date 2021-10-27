@@ -1,10 +1,10 @@
 /**
  * @description       : Details of Objects Like Api Name and label of object and their fields
  * @author            : Siddharth Patni
- * @last modified on  : 10-26-2021
+ * @last modified on  : 10-27-2021
  * @last modified by  : Siddharth Patni
 **/
-public with sharing class ObjectDetails {
+public with sharing class ObjectConfigurationController {
     /**
      * @description : has two properties apiname and label
      */
@@ -22,20 +22,21 @@ public with sharing class ObjectDetails {
         }   
 
     }
+
     /**
     * @description : return List of all object's API name and labels
     * @author Siddharth Patni | 10-26-2021 
     * @return List<String> 
     **/
-    @AuraEnabled(cacheable=true)
-    public static List<WrappedMeta> getObjectNamesList(){
-        List<WrappedMeta> objectNames=new List<WrappedMeta>();
-        map<string,schema.sobjecttype> describe = schema.getglobaldescribe();
-        for(string objectname:describe.keyset()) {
-            WrappedMeta wrappedMetaObj= new WrappedMeta();
-            wrappedMetaObj.label=describe.get(objectname).getdescribe().getlabel();
-            wrappedMetaObj.apiName=describe.get(objectname).getdescribe().getname();
-                objectNames.add(wrappedMetaObj);
+    @AuraEnabled(cacheable = true)
+    public static List<WrappedMeta> getObjectNames(){
+        List<WrappedMeta> objectNames = new List<WrappedMeta>();
+        Map<String, Schema.SObjectType> describe = Schema.getglobaldescribe();
+        for(String objectName:describe.keyset()) {
+            WrappedMeta wrappedMetaObj = new WrappedMeta();
+            wrappedMetaObj.label = describe.get(objectName).getdescribe().getlabel();
+            wrappedMetaObj.apiName = describe.get(objectName).getdescribe().getname();
+            objectNames.add(wrappedMetaObj);
         }
         objectNames.sort();
         return objectNames;
@@ -44,19 +45,19 @@ public with sharing class ObjectDetails {
     /**
     * @description : returns list of API names and label of all field in an object
     * @author Siddharth Patni | 10-26-2021 
-    * @param objname 
+    * @param objName 
     * @return List<String> 
     **/
-    @AuraEnabled(cacheable=true)
-    public static List<WrappedMeta> getFieldNames(String objname) {
+    @AuraEnabled(cacheable = true)
+    public static List<WrappedMeta> getFieldNames(String objName) {
 
         List<WrappedMeta> fieldNameList = new List<WrappedMeta>();
-        map<string,schema.sobjecttype> describe = schema.getglobaldescribe();
+        Map<String, Schema.SObjectType> describe = Schema.getglobaldescribe();
 
-        if(describe.containskey(objname)) {
-            map<string,schema.sobjectfield> fieldmap = describe.get(objname).getdescribe().fields.getmap();
+        if(describe.containskey(objName)) {
+            Map<String, Schema.SObjectField> fieldmap = describe.get(objName).getdescribe().fields.getmap();
 
-            for(string field:fieldmap.keyset()) {
+            for(String field : fieldmap.keyset()) {
                 WrappedMeta wrappedMetaobj = new WrappedMeta();
                 wrappedMetaobj.label = fieldmap.get(field).getdescribe().getlabel();
                 wrappedMetaobj.apiName = fieldmap.get(field).getdescribe().getname();

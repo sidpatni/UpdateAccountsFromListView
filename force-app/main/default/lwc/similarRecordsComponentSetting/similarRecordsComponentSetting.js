@@ -1,6 +1,6 @@
-import { LightningElement,track } from 'lwc';
-import getObjectNamesList from '@salesforce/apex/ObjectDetails.getObjectNamesList';
-import getFieldNames from '@salesforce/apex/ObjectDetails.getFieldNames';
+import { LightningElement, track } from 'lwc';
+import getObjectNames from '@salesforce/apex/ObjectConfigurationController.getObjectNames';
+import getFieldNames from '@salesforce/apex/ObjectConfigurationController.getFieldNames';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import insertSetup from '@salesforce/apex/SimilarRecordsComponentController.insertSetup';
 const ERROR_MESSAGE = 'Error while loading this component';
@@ -19,7 +19,7 @@ export default class SimilarRecordsComponentSetting extends LightningElement {
         try {
             this.loadObjects();
         } catch(exception){
-            this.showToast(ERROR_MESSAGE,exception,'error');
+            this.showToast(ERROR_MESSAGE, exception, 'error');
         }
     }
 
@@ -31,7 +31,7 @@ export default class SimilarRecordsComponentSetting extends LightningElement {
     /** Loads all Object's Api names and labels*/
     loadObjects(){
         let options = [];
-            getObjectNamesList()
+            getObjectNames()
             .then(result => {
                 for (let key of result){
                     options.push({ label: key.label, value: key.apiName  });
@@ -39,7 +39,7 @@ export default class SimilarRecordsComponentSetting extends LightningElement {
                 this.objectList = options;
             })
             .catch(error => {
-                this.showToast(ERROR_MESSAGE,error,'error');
+                this.showToast(ERROR_MESSAGE, error, 'error');
             });
     }
 
@@ -72,7 +72,7 @@ export default class SimilarRecordsComponentSetting extends LightningElement {
                 this.fieldList = fieldMap;
             })
             .catch(error => {
-                this.showToast(ERROR_MESSAGE,error,'error');
+                this.showToast(ERROR_MESSAGE, error, 'error');
             });
     }
 
@@ -83,7 +83,7 @@ export default class SimilarRecordsComponentSetting extends LightningElement {
             // getting all field names from apex
             this.loadFields(this.obj);
         } catch(exception){
-            this.showToast(ERROR_MESSAGE,exception,'error');
+            this.showToast(ERROR_MESSAGE, exception, 'error');
         }
     }
 
@@ -111,7 +111,7 @@ export default class SimilarRecordsComponentSetting extends LightningElement {
         this.objectsWithCustomSettings = event.detail.objectsWithCustomSettings;
     }
     /** shows toast message*/
-    showToast(title,msg,variant){
+    showToast(title, msg, variant){
         this.dispatchEvent(new ShowToastEvent({
             title: title,
             message: msg,
@@ -119,19 +119,19 @@ export default class SimilarRecordsComponentSetting extends LightningElement {
         }));
     }
     
-    /** handles click of save button , saves Custom Similar Record setup */
+    /** handles click of save button, saves Custom Similar Record setup */
     createSetup(){
         try {
             insertSetup({name : this.obj, fields : this.fieldsSelected.join(',')})
             .then(result => {
 
                 if (result === 'successfull'){
-                    this.showToast(SAVED_SUCCESSFULL_MESSAGE,result,'success');
+                    this.showToast(SAVED_SUCCESSFULL_MESSAGE, result, 'success');
                     this.template.querySelector('c-similar-records-setups-table').loadData();
                     this.closeModal();
                     this.resetValues();
                 }else{
-                    this.showToast(ERROR_MESSAGE,result,'error');
+                    this.showToast(ERROR_MESSAGE, result, 'error');
                 }
             });
 

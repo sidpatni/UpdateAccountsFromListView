@@ -92,12 +92,12 @@ export default class SimilarRecordsSetupsTable extends LightningElement {
             });
         });
 
-        var reloadEvent=new CustomEvent('reload',{
-            detail:
-                {
-                    objectsWithCustomSettings: this.objectsWithCustomSettings
-                }
-        }); 
+        var reloadEvent=new CustomEvent('reload', {
+                detail:
+                    {
+                        objectsWithCustomSettings: this.objectsWithCustomSettings
+                    }
+            }); 
         
         this.dispatchEvent(reloadEvent);
     }
@@ -117,7 +117,7 @@ export default class SimilarRecordsSetupsTable extends LightningElement {
 
             //in case of edit
             case 'edit':
-                this.dispatchEvent(new CustomEvent('edit',{
+                this.dispatchEvent(new CustomEvent('edit', {
                     detail:{
                         objName:row.name,
                         fields :row.fields

@@ -1,7 +1,7 @@
 /**
  * @description       : controller class for Similar Records Component
  * @author            : Siddharth Patni
- * @last modified on  : 10-26-2021
+ * @last modified on  : 10-27-2021
  * @last modified by  : Siddharth Patni
 **/
 public with sharing class SimilarRecordsComponentController {
@@ -13,7 +13,10 @@ public with sharing class SimilarRecordsComponentController {
     @AuraEnabled(cacheable= true)
     public static List<String> getSimilarRecordsCustomSetting(String objectName) {
         try {
-            List<SimilarRecordsSetup__c> record = [SELECT Fields__c FROM SimilarRecordsSetup__c WHERE name = :objectName LIMIT 1];
+            List<SimilarRecordsSetup__c> record = [ SELECT Fields__c 
+                                                    FROM SimilarRecordsSetup__c 
+                                                    WHERE Name = :objectName 
+                                                    LIMIT 1 ];
             if(record.size() == 1){
                 return record[0].Fields__c.split(',');
             } else{
@@ -29,10 +32,10 @@ public with sharing class SimilarRecordsComponentController {
     * @author Siddharth Patni | 10-26-2021 
     * @param objectApiName : Api name of object
     * @param objectId : Id of record
-    * @param fields : all the fields of query , comma saperated in single string
+    * @param fields : all the fields of query , comma saperated in single String
     * @param whereClause : condition based on which similarity is checked
     * @param offset : offset (Lazy Load)
-    * @return String : json string of all similar data
+    * @return String : json String of all similar data
     **/
     @AuraEnabled
     public static String getSimilarRecords(
@@ -56,7 +59,7 @@ public with sharing class SimilarRecordsComponentController {
                         + ' WHERE (' + whereClause + ' ) AND Id != \''
                         + objectId + '\' LIMIT 10 OFFSET ' + offset ;
                         
-            List<sObject> result = Database.query(query);
+            List<SObject> result = Database.query(query);
             return JSON.serialize(result);
         } catch (Exception e) {
             System.debug('e : ' + e);
@@ -90,8 +93,8 @@ public with sharing class SimilarRecordsComponentController {
     public static List<WrappedData> getSimilarRecordsSetups(){
         try {
             List<WrappedData> records = new List<WrappedData>();
-            Map<String,SimilarRecordsSetup__c> recordMap= SimilarRecordsSetup__c.getAll();
-            for (String key: recordMap.keySet()){
+            Map<String, SimilarRecordsSetup__c> recordMap = SimilarRecordsSetup__c.getAll();
+            for (String key : recordMap.keySet()){
                 WrappedData record = new WrappedData();
                 record.name = recordMap.get(key).Name;
                 record.fields = recordMap.get(key).Fields__c;
