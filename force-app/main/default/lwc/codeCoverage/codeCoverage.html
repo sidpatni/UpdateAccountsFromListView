@@ -1,0 +1,49 @@
+<!--
+  @description       : Code Coverage LWC , shows the code coverage percentage for classes and triggers
+  @author            : Siddharth Patni
+  @last modified on  : 12-22-2021
+  @last modified by  : Siddharth Patni
+-->
+<template>
+    <lightning-card title="Code Coverage">
+        <!-- Button to toggle between Accordion View and Table view -->
+        <lightning-button onclick={toggleView} title="Switch Accordion/Table View" label="Switch View" slot="actions" variant="brand-outline"></lightning-button>
+        <div class="slds-m-around_small">
+            <!-- Accordion View -->
+            <template if:false={showTable}>
+                <lightning-accordion class="example-accordion">
+                    <template for:each={data} for:item="record">
+                        <lightning-accordion-section name={record.ApexClassOrTriggerId} label={record.className} key={record.className}>
+                            <div key={record.className} id={record.ApexClassOrTriggerId} style="max-width: 300px;" class="slds-m-left_large" > 
+                            <table>
+                                <tr> <td>Class Name            </td> <td> :<b> {record.className}         </b> </td> </tr>
+                                <tr> <td>Code Coverage (%)     </td> <td> :<b> {record.codeCoverage} %    </b> </td> </tr>
+                                <tr> <td>Covered Lines count   </td> <td> :<b> {record.coveredLinesCount} </b> </td> </tr>
+                                <tr> <td>Uncovered Lines count </td> <td> :<b> {record.uncoveredLinesCount}</b></td> </tr>
+                                <tr> <td>Total Coverable Lines </td> <td> :<b> {record.totalLinesCount}   </b> </td> </tr>
+                            </table>
+                            </div>
+                        </lightning-accordion-section>
+                    </template>
+                </lightning-accordion>
+            </template>
+
+            <!-- Table View -->
+            <template if:true={showTable}>
+                <div style="height: 300px;">
+                    <lightning-datatable
+                            key-field="className"
+                            columns={columns}
+                            data={data}
+                            hide-checkbox-column	
+                            default-sort-direction={defaultSortDirection}
+                            sorted-direction={sortDirection}
+                            sorted-by={sortedBy}
+                            onsort={onHandleSort}>
+                    </lightning-datatable>
+                </div> 
+            </template>
+            
+        </div>
+    </lightning-card>
+</template>
